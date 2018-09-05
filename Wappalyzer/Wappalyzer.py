@@ -1,11 +1,10 @@
 import json
+import logging
 import re
 import warnings
-import logging
+
 import pkg_resources
-
 import requests
-
 from bs4 import BeautifulSoup
 
 logger = logging.getLogger(name=__name__)
@@ -59,7 +58,7 @@ class WebPage(object):
         self.meta = {
             meta['name'].lower():
                 meta['content'] for meta in soup.findAll(
-                    'meta', attrs=dict(name=True, content=True))
+            'meta', attrs=dict(name=True, content=True))
         }
 
     @classmethod
@@ -124,7 +123,7 @@ class Wappalyzer(object):
             with open(apps_file, 'r') as fd:
                 obj = json.load(fd)
         else:
-            obj = json.loads(pkg_resources.resource_string(__name__, "data/apps.json"))
+            obj = json.loads(pkg_resources.resource_string(__name__, "data/apps.json").decode('utf-8'))
 
         return cls(categories=obj['categories'], apps=obj['apps'])
 
@@ -180,7 +179,7 @@ class Wappalyzer(object):
         except re.error as e:
             warnings.warn(
                 "Caught '{error}' compiling regex: {regex}"
-                .format(error=e, regex=regex)
+                    .format(error=e, regex=regex)
             )
             # regex that never matches:
             # http://stackoverflow.com/a/1845097/413622
@@ -222,6 +221,7 @@ class Wappalyzer(object):
         """
         Get the set of apps implied by `detected_apps`.
         """
+
         def __get_implied_apps(apps):
             _implied_apps = set()
             for app in apps:
